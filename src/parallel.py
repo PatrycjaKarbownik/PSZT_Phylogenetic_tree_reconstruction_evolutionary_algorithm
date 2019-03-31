@@ -1,3 +1,5 @@
+import numpy as np
+
 A = 0
 G = 1
 C = 2
@@ -31,15 +33,52 @@ def match_score(nucleotide1, nucleotide2):
         ('T', 'C'): substitutionMatrix[T][C],
         ('T', 'T'): substitutionMatrix[T][T],
 
-    }.get((nucleotide1, nucleotide2), startingGapPenalty) #[nucleotide1, nucleotide2]
+    }.get((nucleotide1, nucleotide2), startingGapPenalty) # [nucleotide1, nucleotide2]
+
+
+def maxMatch(score, i,  nucleotide1, nucleotide2):
+    match = score[i-1][0] + match_score(nucleotide1, nucleotide2)
+    gap_first = score[i][0] + startingGapPenalty
+    gap_second = score[i-1][1] + startingGapPenalty
+
+    return max(match, gap_first, gap_second)
 
 
 def parallel(seq1, seq2):
-    return 0
+    lengthOfSeq1, lengthOfSeq2 = len(seq1), len(seq2)
+    print(lengthOfSeq1, lengthOfSeq2)
+    score = np.empty([lengthOfSeq1 + 1, 2], int)
+
+    # prepare temp table
+    for x in range(lengthOfSeq1 + 1):
+        print(x)
+        score[x][0] = x * startingGapPenalty
+        score[x][1] = 0
+
+    print(score)
+
+    j = 1
+    while j <= lengthOfSeq2:
+        print(j)
+        score[0][1] = j * startingGapPenalty
+        i = 1
+        while i <= lengthOfSeq1:
+            print("j = ", j, " i = ", i)
+            score[i][1] = maxMatch(score, i, seq1[i-1], seq2[j-1])
+            i += 1
+        print(score)
+        score[0] = score[1]
+        print("change")
+        print(score)
+        j += 1
+
+
+    #score[x][x] = maxMatch(seq1[x], seq2[x])
+    #score =
 
 
 if __name__ == "__main__":
-    input = open("sequences.txt", "r")
+    input = open("../data/sequences.txt", "r")
 
     sequence1 = input.readline().rstrip('\n')
     sequence2 = input.readline().rstrip('\n')
