@@ -1,10 +1,8 @@
+from parallel import parallel
 from symmetric_matrix import SymmetricMatrix
 
 
 # Temporary function waiting for further implementation
-def parallel(sequence1, sequence2):
-    pass
-
 
 def calculate_similarities(sequences):
     matrix = SymmetricMatrix(len(sequences))
