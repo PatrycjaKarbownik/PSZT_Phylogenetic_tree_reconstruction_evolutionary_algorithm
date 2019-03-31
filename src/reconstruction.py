@@ -2,8 +2,6 @@ from parallel import parallel
 from symmetric_matrix import SymmetricMatrix
 
 
-# Temporary function waiting for further implementation
-
 def calculate_similarities(sequences):
     matrix = SymmetricMatrix(len(sequences))
     for row in range(len(matrix)):
