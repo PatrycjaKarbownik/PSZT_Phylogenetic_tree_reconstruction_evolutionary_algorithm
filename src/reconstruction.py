@@ -1,15 +1,27 @@
-from parallel import parallel
-from symmetric_matrix import SymmetricMatrix
+from leaf import Leaf
+from phylogenetic_tree import create_tree
+
+leaves = []
 
 
-def calculate_similarities(sequences):
-    matrix = SymmetricMatrix(len(sequences))
-    for row in range(len(matrix)):
-        for column in range(row + 1):
-            if row == column: continue
-            matrix[row, column] = parallel(sequences[row], sequences[column])
-    return matrix
+def load():
+    n = 0
+    with open("../data/sequences.txt", "r") as file:
+        for line in file:
+            n += 1
+            if (n % 2 == 1):
+                first_line = line.rstrip('\n').lstrip('<').split()
+                name, year = first_line[0], int(first_line[1])
+            else:
+                sequence = line.rstrip('\n')
+               # print(name, year, sequence)
+                leaves.append(Leaf(name, year, sequence))
 
 
-example_sequences = ["ATATG", "TCATG", "CAGTC", "ACCAT"]
-example_matrix = calculate_similarities(example_sequences)
+load()
+for leaf in leaves:
+    print(leaf)
+create_tree(leaves)
+
+#similarity_matrix = calculate_similarities(leaves)
+#print(similarity_matrix)
