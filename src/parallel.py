@@ -49,7 +49,7 @@ def swap_columns(array, frm, to):
 
 def parallel(seq1, seq2):
     length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
-    score = np.empty([length_of_seq1 + 1, 2], int) # use matrix with 2 columns to minimalizing computational complexity
+    score = np.empty([length_of_seq1 + 1, 2], int)  # use matrix with 2 columns to minimalizing computational complexity
 
     # prepare temp table to calculate score for the best alignment
     for x in range(length_of_seq1 + 1):
@@ -62,9 +62,9 @@ def parallel(seq1, seq2):
         score[0][1] = j * gap_penalty
         i = 1
         while i <= length_of_seq1:
-            score[i][1] = max_match(score, i, seq1[i - 1], seq2[j - 1]) # calculating the best score using calculations for shorter sequences
+            score[i][1] = max_match(score, i, seq1[i - 1], seq2[j - 1])  # calculating the best score using calculations for shorter sequences
             i += 1
-        swap_columns(score, 0, 1) # swap to ease operations on matrix
+        swap_columns(score, 0, 1)  # swap to ease operations on matrix
         j += 1
 
     return score[length_of_seq1][0]
