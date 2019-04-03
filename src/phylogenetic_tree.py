@@ -14,6 +14,7 @@ def create_tree(nodes):
     print(first, second)
     print(nodes[first].name, nodes[second].name + '\n')
     connect_nodes(availability, nodes, first, second)  # connecting best suited sequences
+    correct_matrix(similarity_matrix, availability, first, second)
     print(similarity_matrix)
     print(availability)
 
@@ -31,12 +32,13 @@ def connect_nodes(availability, nodes, first_node, second_node):
     nodes[first_node] = Node(nodes[first_node], nodes[second_node])  # creating new node connecting two suited nodes
     availability[second_node] = False  # changing boolean value in one of connecting nodes in order to not analyze it later
 
-    correct_matrix()
-
     for node in nodes:
         print(node)
 
 
-def correct_matrix():
+def correct_matrix(similarity_matrix, availability, first_node, second_node):
     # TODO: correct_matrix
-    pass
+    # temporary it will be average of values from nodes:
+    for i in range(len(similarity_matrix)):
+        if availability[i] and not (i == first_node or i == second_node):
+            similarity_matrix[first_node, i] = (similarity_matrix[first_node, i] + similarity_matrix[second_node, i])/2

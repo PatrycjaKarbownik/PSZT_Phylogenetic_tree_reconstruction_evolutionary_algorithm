@@ -15,5 +15,5 @@ class Node:
         self.right = right
 
     def __str__(self):
-        string = str(self.left) + str(self.right)
+        string = "left: " + str(self.left) + " right: " + str(self.right)
         return string
