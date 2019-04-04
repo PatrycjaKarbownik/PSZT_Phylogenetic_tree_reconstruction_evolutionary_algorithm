@@ -1,5 +1,6 @@
 # Implementation of symmetric matrix
 # It is stored as one dimension array
+import sys
 
 
 class SymmetricMatrix:
@@ -33,7 +34,7 @@ class SymmetricMatrix:
         return index
 
     def get_max(self, availability):
-        maximum = self._matrix[self._get_index((0, 1))]
+        maximum = -sys.maxsize
         column_max = row_max = 0
         for row in range(self._size):
             if not availability[row]: continue

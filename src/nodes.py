@@ -1,4 +1,13 @@
 class Leaf:
+    def __init__(self, name, year):
+        self.name = name
+        self.year = year
+
+    def __str__(self):
+        string = self.name + ' ' + str(self.year)
+        return string
+
+class TmpLeaf:
     def __init__(self, name, year, sequence):
         self.name = name
         self.year = year

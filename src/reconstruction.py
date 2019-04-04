@@ -1,6 +1,7 @@
-from nodes import Leaf
-from phylogenetic_tree import create_tree
+from nodes import *
+from phylogenetic_tree import *
 
+tmp_leaves = []
 leaves = []
 
 
@@ -14,10 +15,15 @@ def load():
                 name, year = first_line[0], int(first_line[1])
             else:
                 sequence = line.rstrip('\n')
-                leaves.append(Leaf(name, year, sequence))
+                tmp_leaves.append(TmpLeaf(name, year, sequence))
+
+    file.close()
 
 
 load()
-for leaf in leaves:
+for leaf in tmp_leaves:
+    leaves.append(Leaf(leaf.name, leaf.year))
     print(leaf)
-create_tree(leaves)
+similarity_matrix = calculate_similarities(tmp_leaves)  # firstly calculating similarity for leaves (sequences)
+
+create_tree(similarity_matrix, leaves)
