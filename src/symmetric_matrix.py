@@ -3,14 +3,14 @@
 
 
 class SymmetricMatrix:
-    #TODO: swap columns and rows indexes
+    # TODO: swap columns and rows indexes
     def __init__(self, size):
         if size <= 0:
             raise ValueError("Size of matrix is expected to be integer greater than 0")
         self._size = size
         self._matrix = list()
         for i in range((size + 1) * size // 2):
-                self._matrix.append('')
+            self._matrix.append(0)
 
     def __len__(self):
         return self._size
@@ -44,15 +44,17 @@ class SymmetricMatrix:
                     maximum = value
                     column_max = column
                     row_max = row
-        #TODO: change order of returned variables if you changed indexes earlier
+        # TODO: change order of returned variables if you changed indexes earlier
         return column_max, row_max
 
     def __str__(self):
         string = ""
         for column in range(self._size):
+            tmp = ''
             for row in range(self._size):
-                string += str(self._matrix[self._get_index((column, row))]) + '\t'
-            string += '\n'
+                tmp += str(float(self._matrix[self._get_index((column, row))]))
+                tmp += ' ' * (15 - len(tmp) % 15)
+            string += tmp + '\n'
         return string
 
 
