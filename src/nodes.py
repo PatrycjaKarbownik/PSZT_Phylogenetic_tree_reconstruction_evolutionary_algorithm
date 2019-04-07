@@ -39,7 +39,7 @@ class Node:
         self.bootstrap = 0
 
     def __str__(self):
-        string = "(" + self.bootstrap + ")" + "left: " + str(self.left) + " right: " + str(self.right)
+        string = "(" + str(self.bootstrap) + ")" + "left: " + str(self.left) + " right: " + str(self.right)
         return string
 
     def __eq__(self, other):
