@@ -1,6 +1,7 @@
 from nodes import *
 from phylogenetic_tree import *
 import scoring
+import graphic_tree
 import time
 
 tmp_leaves = []
@@ -39,3 +40,5 @@ score = scoring.score_tree(node, columns, leaves, None)
 
 print("Time of everything: " + str(time.clock() - start_time))
 print("Score of bootstrap: " + str(score))
+
+graphic_tree.run_graphics(node)
