@@ -3,15 +3,15 @@ We did tests for this as this is crucial part of our scoring system"""
 
 from nodes import *
 
-if __name__ != "__main__":
+if __name__ == "__main__":
 
     # Construction of tree1
 
-    a1 = Leaf("a", "1")
-    b1 = Leaf("b", "1")
-    c1 = Leaf("c", "2")
-    d1 = Leaf("d", "1")
-    e1 = Leaf("e", "1")
+    a1 = Leaf("a", "1", 1)
+    b1 = Leaf("b", "1", 2)
+    c1 = Leaf("c", "2", 3)
+    d1 = Leaf("d", "1", 4)
+    e1 = Leaf("e", "1", 5)
 
     node11 = Node(b1, c1)
     node12 = Node(a1, node11)
@@ -19,11 +19,11 @@ if __name__ != "__main__":
     tree1 = Node(node12, node13)
 
     # Construction of tree2
-    a2 = Leaf("a", "1")
-    b2 = Leaf("b", "1")
-    c2 = Leaf("c", "2")
-    d2 = Leaf("d", "1")
-    e2 = Leaf("e", "1")
+    a2 = Leaf("a", "1", 1)
+    b2 = Leaf("b", "1", 2)
+    c2 = Leaf("c", "2", 3)
+    d2 = Leaf("d", "1", 4)
+    e2 = Leaf("e", "1", 5)
 
     node21 = Node(d2, e2)
     node22 = Node(b2, c2)
@@ -31,45 +31,45 @@ if __name__ != "__main__":
     tree2 = Node(node21, node23)
 
     # Construction of tree3
-    a3 = Leaf("a", "3")
-    b3 = Leaf("b", "3")
-    c3 = Leaf("c", "3")
-    d3 = Leaf("d", "3")
+    a3 = Leaf("a", "3", 1)
+    b3 = Leaf("b", "3", 2)
+    c3 = Leaf("c", "3", 3)
+    d3 = Leaf("d", "3", 4)
 
     node31 = Node(b3, c3)
     node32 = Node(node31, d3)
     tree3 = Node(node32, a3)
 
     # Construction of tree4
-    a4 = Leaf("a", "3")
-    b4 = Leaf("b", "3")
-    c4 = Leaf("c", "3")
-    d4 = Leaf("d", "3")
+    a4 = Leaf("a", "3", 1)
+    b4 = Leaf("b", "3", 2)
+    c4 = Leaf("c", "3", 3)
+    d4 = Leaf("d", "3", 4)
 
     node41 = Node(c4, b4)
     node42 = Node(d4, node41)
     tree4 = Node(a4, node42)
 
     # Construction of tree5
-    a5 = Leaf("a", "4")
-    b5 = Leaf("b", "4")
-    c5 = Leaf("c", "4")
+    a5 = Leaf("a", "4", 1)
+    b5 = Leaf("b", "4", 2)
+    c5 = Leaf("c", "4", 3)
 
     node51 = Node(a5, b5)
     tree5 = Node(node51, c5)
 
     # Construction of tree6
-    a6 = Leaf("a", "4")
-    b6 = Leaf("b", "4")
-    c6 = Leaf("c", "4")
+    a6 = Leaf("a", "4", 1)
+    b6 = Leaf("b", "4", 2)
+    c6 = Leaf("c", "4", 3)
 
     node61 = Node(a1, c1)
     tree6 = Node(node61, b6)
 
     # Construction of tree7
-    a7 = Leaf("a", "4")
-    b7 = Leaf("b", "4")
-    c7 = Leaf("c", "4")
+    a7 = Leaf("a", "4", 1)
+    b7 = Leaf("b", "4", 2)
+    c7 = Leaf("c", "4", 3)
 
     node71 = Node(a7, b7)
     tree7 = Node(c7, node71)

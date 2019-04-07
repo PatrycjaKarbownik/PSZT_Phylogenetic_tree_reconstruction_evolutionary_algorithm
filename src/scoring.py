@@ -1,5 +1,7 @@
 import random
+import nodes as n
 import numpy as np
+import phylogenetic_tree as p_tree
 
 # Amount of bootstrapped data
 boot_amount = 100
@@ -50,7 +52,7 @@ def _generate_from_columns(columns):
 
 # Since these sequences can get big really quick we'll need to do every step of making and calculating new tree
 # separately allowing memory to clear out strings we don't need
-def score_tree(nodes, columns, leaves, index_of_tree):
+def score_tree(tree, columns, leaves, index_of_tree):
     new_trees = []
     seq_amount = len(columns[0])
     length_of_seq = len(columns)
@@ -59,12 +61,23 @@ def score_tree(nodes, columns, leaves, index_of_tree):
         # len(columns) return amount of columns in sequence, which is, well, length of sequence we're looking for
         col_order = _sample_with_replacement(length_of_seq)
         new_sequences = list()
+        # We initialize new sequences
         for pos in range(seq_amount):
             new_sequences.append('')
-        for pos in range(seq_amount):
+        # Now we're creating sequences based on columns order we generated
+        for col in col_order:
+            for pos in range(seq_amount):
+                new_sequences[pos] += columns[col][pos]
 
+        # We can now generate our new tree from bootstrapped data, starting off with leaves
+        tmp_leaves = []
+        for j, leaf in enumerate(leaves):
+            tmp_leaves.append(n.TmpLeaf(leaf.name, leaf.year, j, new_sequences[j]))
+        similarity_matrix = p_tree.calculate_similarities(tmp_leaves)
+        boot_tree = p_tree.create_tree(similarity_matrix, leaves)
 
-            pass
+        # Now we can finally count what nodes from our tree are in new tree
+
 
 
 if __name__ == "__main__":
@@ -75,8 +88,8 @@ if __name__ == "__main__":
 
     new = _sample_with_replacement(len(example_data[0]))
     print("\nBootstrapped data:")
-    for i in new:
-        print(i)
+    for _ in new:
+        print(_)
 
     print("\nExample values of function f(x)")
     for x in (0.65, 0.70, 0.75):

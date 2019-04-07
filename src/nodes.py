@@ -1,29 +1,15 @@
-names_of_sequences = []
+"""The most crucial part of these nodes is method for comparing them. We assume that every leaf get its unique number,
+which then is raised to the power of two. Nodes then store information about sum of numbers in their sons.
+It speeds up a lot comparing because we don't need to dive to every part of node's sons to know if they're same
+or not. We achieve this by having these powers of two - you just cannot make two sums A and B where both of them
+are sums of powers of two and these sums doesn't have common components"""
 
-def loadname():
-    n = 0
-    with open("../data/sequences.txt", "r") as file:
-        for line in file:
-            n += 1
-            if n % 2 == 1:
-                first_line = line.rstrip(' ').split()
-                name = first_line[0]
-            else:
-                names_of_sequences.append(name)
-    file.close()
-
-loadname()
 
 class Leaf:
-    def __init__(self, name, year):
+    def __init__(self, name, year, number):
         self.name = name
         self.year = year
-        self.number = 0
-        for i, sequence_name in enumerate(names_of_sequences):
-            if(sequence_name==name):
-                self.number = 2**i
-        if (self.number==0):
-            print("PRZYPAL...")
+        self.number = number ** 2
 
     def __str__(self):
         string = self.name + ' ' + str(self.year)
@@ -34,9 +20,10 @@ class Leaf:
 
 
 class TmpLeaf:
-    def __init__(self, name, year, sequence):
+    def __init__(self, name, year, number, sequence):
         self.name = name
         self.year = year
+        self.number = number ** 2
         self.sequence = sequence
 
     def __str__(self):
@@ -49,12 +36,14 @@ class Node:
         self.left = left
         self.right = right
         self.number = left.number + right.number
+        self.bootstrap = 0
 
     def __str__(self):
-        string = "left: " + str(self.left) + " right: " + str(self.right)
+        string = "(" + self.bootstrap + ")" + "left: " + str(self.left) + " right: " + str(self.right)
         return string
 
     def __eq__(self, other):
         if self.number != other.number:
             return False
-        return ((self.left == other.left) and (self.right == other.right)) or ((self.right == other.left) and (self.left == other.right))
+        return (((self.left == other.left) and (self.right == other.right))
+                or ((self.right == other.left) and (self.left == other.right)))
