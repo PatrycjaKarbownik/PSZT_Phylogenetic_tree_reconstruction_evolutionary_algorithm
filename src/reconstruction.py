@@ -1,5 +1,6 @@
 from nodes import *
 from phylogenetic_tree import *
+import scoring
 
 tmp_leaves = []
 leaves = []
@@ -26,4 +27,9 @@ for leaf in tmp_leaves:
     print(leaf)
 similarity_matrix = calculate_similarities(tmp_leaves)  # firstly calculating similarity for leaves (sequences)
 
-create_tree(similarity_matrix, leaves)
+node = create_tree(similarity_matrix, leaves)
+columns = scoring.make_columns(tmp_leaves)
+for string in columns:
+    print(string)
+
+# scoring.score_tree(None, columns, None, None)

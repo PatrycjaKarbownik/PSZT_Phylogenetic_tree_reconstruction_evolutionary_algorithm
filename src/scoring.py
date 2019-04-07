@@ -1,6 +1,9 @@
 import random
 import numpy as np
 
+# Amount of bootstrapped data
+boot_amount = 100
+
 
 # f function used to calculate score of vertices
 # x is probability
@@ -11,44 +14,57 @@ def f(x):
     return np.cbrt(x - 0.7) + 1
 
 
-# As we'll work on indexes, this function just samples with replacement numbers from 0 to amount of leaves in tree
-# It may output from number 5 result: 0 4 3 4 2, which means that tree will be constructed from
-# leaves with numbers 0, 2, 3 and two times 4
-def sample_with_replacement(data):
+# As we'll work on indexes, this function just samples with replacement numbers from 0 to amount of columns in sequence
+# It may output from number 5 result: 0 4 3 4 2,
+def _sample_with_replacement(length_of_seq):
     result = list()
-    amount_of_seq = len(data)
-    length_of_seq = len(data[0])
-
-    for i in range(amount_of_seq):
-        result.append('')
 
     for i in range(length_of_seq):
         rand = random.randint(0, length_of_seq - 1)
-        for j in range(amount_of_seq):
-            result[j] += data[j][rand]
+        result.append(rand)
     return result
 
 
-# Example of sequences:
+# Example:
 # T A T C G
 # T A T G G
 # T T T C C
 # Result : list ["TTT", "AAT", "TTT", "CGC", "GGC"]
-def make_columns(data):
+def make_columns(leaves):
     result = list()
+    length = len(leaves[0].sequence)
     # We're initializing index in list for every column in sequence (we're assuming we work with pre-aligned data)
-    for sequence in range(len(data[0])):
+    for sequence in range(length):
         result.append('')
 
-    for sequence in data:
-        for i in range(len(sequence)):
-            result[i] += sequence[i]
+    for leaf in leaves:
+        for i in range(length):
+            result[i] += leaf.sequence[i]
 
     return result
 
 
-def score_tree(nodes, index_of_tree, similarity_matrix):
+def _generate_from_columns(columns):
     pass
+
+
+# Since these sequences can get big really quick we'll need to do every step of making and calculating new tree
+# separately allowing memory to clear out strings we don't need
+def score_tree(nodes, columns, leaves, index_of_tree):
+    new_trees = []
+    seq_amount = len(columns[0])
+    length_of_seq = len(columns)
+
+    for i in range(boot_amount):
+        # len(columns) return amount of columns in sequence, which is, well, length of sequence we're looking for
+        col_order = _sample_with_replacement(length_of_seq)
+        new_sequences = list()
+        for pos in range(seq_amount):
+            new_sequences.append('')
+        for pos in range(seq_amount):
+
+
+            pass
 
 
 if __name__ == "__main__":
@@ -57,9 +73,7 @@ if __name__ == "__main__":
     for example in example_data:
         print(example)
 
-    columns = make_columns(example_data)
-
-    new = sample_with_replacement(example_data)
+    new = _sample_with_replacement(len(example_data[0]))
     print("\nBootstrapped data:")
     for i in new:
         print(i)
