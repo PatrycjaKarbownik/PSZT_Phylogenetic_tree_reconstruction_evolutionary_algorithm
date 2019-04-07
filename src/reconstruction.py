@@ -23,10 +23,8 @@ def load():
 
 
 load()
-for leaf in tmp_leaves:
-    # We provide here small workaround - we do want to have a power of two as a number, but not to the power of four
-    # We're not yet sure if we want to stay with two different classes of leaves, so we'll use square root for a while
-    leaves.append(Leaf(leaf.name, leaf.year, leaf.number ** (1/2)))
+for i, leaf in enumerate(tmp_leaves):
+    leaves.append(Leaf(leaf.name, leaf.year, i))
     print(leaf)
 similarity_matrix = calculate_similarities(tmp_leaves)  # firstly calculating similarity for leaves (sequences)
 
