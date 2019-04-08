@@ -1,5 +1,5 @@
-"""The most crucial part of these nodes is method for comparing them. We assume that every leaf get its unique number,
-which then is raised to the power of two. Nodes then store information about sum of numbers in their sons.
+"""The most crucial part of these nodes is method for comparing them. Every leaf has its unique number which is
+power of two. Nodes then store information about sum of numbers in their sons.
 It speeds up a lot comparing because we don't need to dive to every part of node's sons to know if they're same
 or not. We achieve this by having these powers of two - you just cannot make two sums A and B where both of them
 are sums of powers of two and these sums doesn't have common components"""
@@ -9,7 +9,7 @@ class Leaf:
     def __init__(self, name, year, number):
         self.name = name
         self.year = year
-        self.number = number ** 2
+        self.number = 2 ** number
 
     def __str__(self):
         string = self.name + ' ' + str(self.year)
@@ -23,7 +23,7 @@ class TmpLeaf:
     def __init__(self, name, year, number, sequence):
         self.name = name
         self.year = year
-        self.number = number ** 2
+        self.number = 2 ** number
         self.sequence = sequence
 
     def __str__(self):
