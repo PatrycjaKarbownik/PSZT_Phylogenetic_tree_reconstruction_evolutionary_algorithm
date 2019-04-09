@@ -25,7 +25,8 @@ class SymmetricMatrix:
         return self._matrix[index]
 
     # Since this class is represented as one-dimension array, we have to calculate index of position (row, column)
-    def _get_index(self, key):
+    @staticmethod
+    def _get_index(key):
         column, row = key
         # Since (column, row) should have same value as (row, column), we want to operate on one of these
         if column > row:
@@ -58,7 +59,39 @@ class SymmetricMatrix:
             string += tmp + '\n'
         return string
 
+    def copy(self):
+        new_matrix = self._matrix.copy()
+        result = SymmetricMatrix(self._size)
+        result._matrix = new_matrix
+        return result
+
+    # Instead of putting elements one by one manually you just give it a list of half of matrix including diagonal
+    def set_from_list(self, given_list):
+        if len(given_list) != len(self._matrix):
+            return
+        self._matrix = given_list.copy()
+
+    # Same as set, but instead setting new values you add value to every position in matrix
+    def add_from_list(self, given_list):
+        if len(given_list) != len(self._matrix):
+            return
+        for pos, value in enumerate(given_list, 0):
+            self._matrix[pos] += value
+
 
 if __name__ == "__main__":
     matrix = SymmetricMatrix(4)
+    matrix2 = matrix.copy()
+    matrix[1, 2] = 3
     print(matrix)
+    print(matrix2)
+    matrix2.set_from_list([1,
+                           2, 3,
+                           4, 5, 6,
+                           7, 8, 9, 10])
+    print(matrix2)
+    matrix2.add_from_list([0,
+                           1, 0,
+                           1, 0, 1,
+                           1, 1, 1, 3])
+    print(matrix2)
