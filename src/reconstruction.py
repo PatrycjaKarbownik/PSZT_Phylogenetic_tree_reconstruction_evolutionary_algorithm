@@ -3,6 +3,7 @@ from phylogenetic_tree import *
 import scoring
 import graphic_tree
 import time
+from substitution_matrix import SubstitutionMatrix
 
 tmp_leaves = []
 leaves = []
@@ -27,15 +28,22 @@ load()
 for i, leaf in enumerate(tmp_leaves):
     leaves.append(Leaf(leaf.name, leaf.year, i))
     print(leaf)
-similarity_matrix = calculate_similarities(tmp_leaves)  # firstly calculating similarity for leaves (sequences)
 
-node = create_tree(similarity_matrix, leaves)
+sub_matrix1 = SubstitutionMatrix(initial_change=True)
+similarity_matrix1 = calculate_similarities(tmp_leaves, sub_matrix1)  # firstly calculating similarity for leaves (sequences)
+node = create_tree(similarity_matrix1, leaves)
 columns = scoring.make_columns(tmp_leaves)
-score = scoring.score_tree(node, columns, leaves, None)
+score = scoring.score_tree(node, columns, leaves, sub_matrix1)
 
-node2 = create_tree(similarity_matrix, leaves)
-columns = scoring.make_columns(tmp_leaves)
-scoring.score_tree(node2, columns, leaves, None)
+sub_matrix2 = SubstitutionMatrix()
+while not sub_matrix2.reached_stop():
+    sub_matrix2.changeSubstitutionMatrix()
+    similarity_matrix2 = calculate_similarities(tmp_leaves, sub_matrix2)  # firstly calculating similarity for leaves (sequences)
+    node2 = create_tree(similarity_matrix2, leaves)
+    columns = scoring.make_columns(tmp_leaves)
+    score = scoring.score_tree(node2, columns, leaves, sub_matrix2)
+    sub_matrix2.checkIfBetterBootstrapValue(score)
+    print("DOIN")
 
 print("Time of everything: " + str(time.clock() - start_time))
 print("Score of bootstrap: " + str(score))

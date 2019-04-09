@@ -33,12 +33,12 @@ def create_tree(similarity_matrix, leaves):
     return nodes[index_of_tree]
 
 
-def calculate_similarities(leaves):
+def calculate_similarities(leaves, substitution_matrix):
     matrix = SymmetricMatrix(len(leaves))
     for row in range(len(matrix)):
         for column in range(row + 1):
             if row == column: continue
-            matrix[row, column] = parallel(leaves[row].sequence, leaves[column].sequence)
+            matrix[row, column] = parallel(leaves[row].sequence, leaves[column].sequence, substitution_matrix)
     return matrix
 
 
