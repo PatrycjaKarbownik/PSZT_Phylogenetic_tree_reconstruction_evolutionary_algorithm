@@ -40,7 +40,7 @@ def multiple_alignment(similarity_matrix, leaves):
     # pairwise alignment
     aligned_sequences = []
     for leaf in leaves:
-        aligned_sequences += pairwise_alignment(leaf.sequence, leaves[reference_sequence_index].sequence)
+        aligned_sequences.append(pairwise_alignment(leaves[reference_sequence_index].sequence, leaf.sequence))
 
     print(aligned_sequences)
 

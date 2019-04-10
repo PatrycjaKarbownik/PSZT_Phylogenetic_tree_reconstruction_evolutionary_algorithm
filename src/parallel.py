@@ -116,7 +116,7 @@ def get_aligned_sequences(score, seq1, seq2):
 
     seq1_aligned = seq1_aligned[::-1]
     seq2_aligned = seq2_aligned[::-1]
-    return seq1_aligned, seq2_aligned
+    return [seq1_aligned, seq2_aligned]
 
 
 def pairwise_alignment(seq1, seq2):
