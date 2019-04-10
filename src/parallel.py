@@ -56,9 +56,9 @@ def simple_parallel(seq1, seq2):  # compare two sequences char-to-char
 
 
 def _max_match(score, i, nucleotide1, nucleotide2):
-    match = score[i-1][0] + _match_score(nucleotide1, nucleotide2)
-    gap_first = score[i][0] + gap_penalty
-    gap_second = score[i-1][1] + gap_penalty
+    match = score[i-1][0] + _match_score(nucleotide1, nucleotide2), i-1, 0
+    gap_first = score[i][0] + gap_penalty, i, 0
+    gap_second = score[i-1][1] + gap_penalty, i-1, 1
 
     return max(match, gap_first, gap_second)
 
@@ -67,33 +67,108 @@ def _swap_columns(array, frm, to):
     array[:, [frm, to]] = array[:, [to, frm]]
 
 
-def parallel(seq1, seq2):
-    length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
-    score = np.empty([length_of_seq1 + 1, 2], int)  # use matrix with 2 columns to minimalizing computational complexity
+def _prepare_columns(rows, initialize_value):
+    result = np.empty([rows + 1, 2], int)  # use matrix with 2 columns to minimalizing computational complexity
+
+    for x in range(rows + 1):
+        result[x][0] = x * initialize_value
+        result[x][1] = 0
+
+    return result
+
+
+# def parallel(seq1, seq2):
+#     length_of_seq1 = len(seq1)
+#     length_of_seq2 = len(seq2)
+#     # prepare temp table to calculate score for the best alignment
+#     score = _prepare_columns(length_of_seq1, gap_penalty)
+#     # stripped Needleman-Wunsch algorithm using dynamic programming
+#     return _calculate_score(score, seq1, seq2, 0, length_of_seq2, 0, length_of_seq1)[length_of_seq1][0]
+
+
+def _calculate_score(seq1, seq2, length_of_seq1, length_of_seq2):
+    # length_of_seq2 = end_j - begin_j
+    # length_of_seq1 = end_i - begin_i
 
     # prepare temp table to calculate score for the best alignment
-    for x in range(length_of_seq1 + 1):
-        score[x][0] = x * gap_penalty
-        score[x][1] = 0
+    score = _prepare_columns(length_of_seq1, gap_penalty)
 
-    # stripped Needleman-Wunsch algorithm using dynamic programming
     j = 1
     while j <= length_of_seq2:
         score[0][1] = j * gap_penalty
         i = 1
         while i <= length_of_seq1:
-            score[i][1] = _max_match(score, i, seq1[i - 1], seq2[j - 1])  # calculating the best score using calculations for shorter sequences
+            score[i][1] = float(_max_match(score, i, seq1[i-1], seq2[j-1])[0])
             i += 1
-        _swap_columns(score, 0, 1)  # swap to ease operations on matrix
+        _swap_columns(score, 0, 1)
         j += 1
 
-    return score[length_of_seq1][0]
+    return score
+
+def _calculate_indexes(score, seq1, seq2, begin_i, end_i, begin_j, end_j):
+    length_of_seq1 = end_i - begin_i
+    # prepare temp table to calculate score for the best alignment
+    indexes = _prepare_columns(length_of_seq1, 1)
+
+    j = begin_j + 1
+    while j <= end_j:
+        score[0][1] = j * gap_penalty
+        indexes[0][1] = 0
+        i = begin_i + 1
+        while i <= length_of_seq1:
+            max_match = _max_match(score, i, seq1[i - 1], seq2[j - 1])
+            score[i][1], index_i, index_j = float(max_match[0]), int(max_match[1]), int(max_match[2])
+            indexes[i][1] = indexes[index_i, index_j]
+            i += 1
+        _swap_columns(score, 0, 1)
+        _swap_columns(indexes, 0, 1)
+        print(score)
+        print(indexes)
+        j += 1
+    return indexes[length_of_seq1][0]
+
+
+def parallel(seq1, seq2):
+    length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
+    return _calculate_score(seq1, seq2, length_of_seq1, length_of_seq2)[length_of_seq1][0]
+
+
+def needleman_wunsch(result, seq1, seq2, begin_i, end_i, begin_j, end_j):
+    length_of_seq1 = end_i - begin_i
+    length_of_seq2 = end_j - begin_j
+    if length_of_seq1 <= 2 and length_of_seq2 <=2:
+        # return STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP STOP
+        pass
+    m_div_2 = begin_j + int((end_j - begin_j) / 2) + ((end_j - begin_j) % 2 > 0)
+    length_of_seq2 = m_div_2 - begin_j
+
+
+    if begin_i != 0:
+        length_of_seq1 += 1
+    if begin_j !=0:
+        length_of_seq2 += 1
+    score = _calculate_score(seq1, seq2, length_of_seq1, length_of_seq2)
+    print(score)
+    index = _calculate_indexes(score, seq1, seq2, begin_i, end_i, m_div_2, end_j)
+    print(index)
+    result.append([index - 1, m_div_2 - 1])
+
+    left = needleman_wunsch(result, seq1, seq2, begin_i, index, begin_j, m_div_2)
+    right = needleman_wunsch(result, seq1, seq2, index, end_i, m_div_2, end_j)
+    result = left + result.append([index - 1, m_div_2 - 1]) + right
+
+    return result
+
+
 
 
 if __name__ == "__main__":
-    input = open("../data/sequences.txt", "r")
+    input = open("../data/sequence_presentation.txt", "r")
 
     sequence1 = input.readline().rstrip('\n')
     sequence2 = input.readline().rstrip('\n')
 
-    print(parallel(sequence1, sequence2))
+    # print(parallel(sequence1, sequence2))
+    result = []
+    print(needleman_wunsch(result, sequence1, sequence2, 0, len(sequence1), 0, len(sequence2)))
+    print(result)

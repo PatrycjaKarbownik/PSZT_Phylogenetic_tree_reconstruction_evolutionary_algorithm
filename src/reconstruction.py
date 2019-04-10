@@ -1,4 +1,4 @@
-from alignment import calculate_similarities, calculate_similarities_aligned
+from alignment import calculate_similarities, calculate_similarities_aligned, multiple_alignment
 from nodes import *
 from phylogenetic_tree import *
 import scoring
@@ -31,8 +31,10 @@ for i, leaf in enumerate(tmp_leaves):
 similarity_matrix = calculate_similarities(tmp_leaves)  # firstly calculating similarity for leaves (sequences)
 print(similarity_matrix)
 
-similarity_matrix_aligned = calculate_similarities_aligned(tmp_leaves)
-print(similarity_matrix_aligned)
+multiple_alignment(similarity_matrix, tmp_leaves)
+
+#similarity_matrix_aligned = calculate_similarities_aligned(tmp_leaves)
+#print(similarity_matrix_aligned)
 
 
 
