@@ -29,23 +29,18 @@ for i, leaf in enumerate(tmp_leaves):
     leaves.append(Leaf(leaf.name, leaf.year, i))
     print(leaf)
 
-sub_matrix1 = SubstitutionMatrix(initial_change=True)
-similarity_matrix1 = calculate_similarities(tmp_leaves, sub_matrix1)  # firstly calculating similarity for leaves (sequences)
-node = create_tree(similarity_matrix1, leaves)
-columns = scoring.make_columns(tmp_leaves)
-score = scoring.score_tree(node, columns, leaves, sub_matrix1)
-
-sub_matrix2 = SubstitutionMatrix()
-while not sub_matrix2.reached_stop():
-    sub_matrix2.changeSubstitutionMatrix()
-    similarity_matrix2 = calculate_similarities(tmp_leaves, sub_matrix2)  # firstly calculating similarity for leaves (sequences)
-    node2 = create_tree(similarity_matrix2, leaves)
+trees = []
+sub_matrix = SubstitutionMatrix()
+while not sub_matrix.reached_stop():
+    sub_matrix.changeSubstitutionMatrix()
+    similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)  # firstly calculating similarity for leaves (sequences)
+    node = create_tree(similarity_matrix, leaves)
     columns = scoring.make_columns(tmp_leaves)
-    score = scoring.score_tree(node2, columns, leaves, sub_matrix2)
-    sub_matrix2.checkIfBetterBootstrapValue(score)
+    score = scoring.score_tree(node, columns, leaves, sub_matrix)
+    if sub_matrix.has_better_bootstrap_value(score):
+        trees.append((node, score))
     print("DOIN")
 
 print("Time of everything: " + str(time.clock() - start_time))
-print("Score of bootstrap: " + str(score))
 
-graphic_tree.run_graphics([node, node2])
+graphic_tree.run_graphics(trees)

@@ -45,6 +45,8 @@ def _draw_tree(tree, canvas):
     seq_list = list()
     _map_tree(tree, nodes_list, seq_list)
 
+    canvas.delete("all")
+
     # points is a dictionary storing points by a nodes and leafs unique numbers
     points = dict()
     for i, seq in enumerate(seq_list, 0):
@@ -81,10 +83,10 @@ def run_graphics(trees):
         if tree_index == 0:
             return
 
-        canvas.delete("all")
         tree_index -= 1
-        _draw_tree(trees[tree_index], canvas)
+        _draw_tree(trees[tree_index][0], canvas)
         canvas.create_text(750, 550, text=str(tree_index + 1))
+        canvas.create_text(750, 580, text=str(trees[tree_index][1]))
 
     def next_tree(event):
         nonlocal canvas
@@ -94,10 +96,13 @@ def run_graphics(trees):
         if tree_index == max_index:
             return
 
-        canvas.delete("all")
         tree_index += 1
-        _draw_tree(trees[tree_index], canvas)
-        canvas.create_text(750, 550, text=str(tree_index + 1))
+        _draw_tree(trees[tree_index][0], canvas)
+        if tree_index == max_index:
+            canvas.create_text(750, 550, text="BEST TREE! " + str(tree_index + 1))
+        else:
+            canvas.create_text(750, 550, text=str(tree_index + 1))
+        canvas.create_text(750, 580, text=str(trees[tree_index][1]))
 
     root = Tk()
     root.title("Phylogenetic tree")
@@ -119,7 +124,8 @@ def run_graphics(trees):
     root.bind("a", previous_tree)
     root.bind("d", next_tree)
 
-    _draw_tree(trees[tree_index], canvas)
+    _draw_tree(trees[tree_index][0], canvas)
     canvas.create_text(750, 550, text=str(tree_index + 1))
+    canvas.create_text(750, 580, text=str(trees[tree_index][1]))
 
     root.mainloop()
