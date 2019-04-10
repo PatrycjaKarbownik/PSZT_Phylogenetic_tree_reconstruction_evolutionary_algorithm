@@ -11,7 +11,7 @@ leaves = []
 
 def load():
     n = 0
-    with open("../data/sequences.txt", "r") as file:
+    with open("../data/old_sequences.txt", "r") as file:
         for i, line in enumerate(file):
             n += 1
             if n % 2 == 1:

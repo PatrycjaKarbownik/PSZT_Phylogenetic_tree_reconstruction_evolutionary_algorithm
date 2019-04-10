@@ -22,6 +22,20 @@ def _match_score(nucleotide1, nucleotide2):
     return substitution_matrix[nucl_dict[nucleotide1]][nucl_dict[nucleotide2]],
 
 
+def _swap_columns(array, frm, to):
+    array[:, [frm, to]] = array[:, [to, frm]]
+
+
+def _prepare_columns(rows, initialize_value):
+    result = np.empty([rows + 1, 2], int)  # use matrix with 2 columns to minimalizing computational complexity
+
+    for x in range(rows + 1):
+        result[x][0] = x * initialize_value
+        result[x][1] = 0
+
+    return result
+
+
 def simple_parallel(seq1, seq2):  # compare two sequences char-to-char
     length_of_seq = len(seq1)
     score = 0
@@ -37,20 +51,6 @@ def _max_match_two_columns(score, i, nucleotide1, nucleotide2):
     gap_second = score[i-1][1] + gap_penalty, i-1, 1
 
     return max(match, gap_first, gap_second)
-
-
-def _swap_columns(array, frm, to):
-    array[:, [frm, to]] = array[:, [to, frm]]
-
-
-def _prepare_columns(rows, initialize_value):
-    result = np.empty([rows + 1, 2], int)  # use matrix with 2 columns to minimalizing computational complexity
-
-    for x in range(rows + 1):
-        result[x][0] = x * initialize_value
-        result[x][1] = 0
-
-    return result
 
 
 def _calculate_score(seq1, seq2, length_of_seq1, length_of_seq2):
@@ -93,20 +93,19 @@ def _simple_needleman_wunsch_score(seq1, seq2):
     return result
 
 
-def get_pair_wise_aligned_sequences(seq1, seq2):
+def get_aligned_sequences(score, seq1, seq2):
     length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
-    score = _simple_needleman_wunsch_score(seq1, seq2)
     j = length_of_seq2
     i = length_of_seq1
     seq1_aligned = ''
     seq2_aligned = ''
     while i > 0 or j > 0:
-        if score[i][j] == score[i-1][j-1] + _match_score(seq1[i - 1], seq2[j - 1]):
+        if score[i][j] == score[i - 1][j - 1] + _match_score(seq1[i - 1], seq2[j - 1]):
             seq1_aligned += seq1[i - 1]
             seq2_aligned += seq2[j - 1]
             i -= 1
             j -= 1
-        elif score[i][j] == score[i-1][j] + gap_penalty:
+        elif score[i][j] == score[i - 1][j] + gap_penalty:
             seq1_aligned += seq1[i - 1]
             seq2_aligned += '-'
             i -= 1
@@ -117,7 +116,12 @@ def get_pair_wise_aligned_sequences(seq1, seq2):
 
     seq1_aligned = seq1_aligned[::-1]
     seq2_aligned = seq2_aligned[::-1]
-    print(seq1_aligned, seq2_aligned)
+    return seq1_aligned, seq2_aligned
+
+
+def pairwise_alignment(seq1, seq2):
+    score = _simple_needleman_wunsch_score(seq1, seq2)
+    return get_aligned_sequences(score, seq1, seq2)
 
 
 if __name__ == "__main__":
@@ -126,6 +130,5 @@ if __name__ == "__main__":
     seq1 = input.readline().rstrip('\n')
     seq2 = input.readline().rstrip('\n')
 
-
-    get_pair_wise_aligned_sequences(seq1, seq2)
+    print(pairwise_alignment(seq1, seq2))
 
