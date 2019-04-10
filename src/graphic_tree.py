@@ -45,6 +45,8 @@ def _draw_tree(tree, canvas):
     seq_list = list()
     _map_tree(tree, nodes_list, seq_list)
 
+    canvas.delete("all")
+
     # points is a dictionary storing points by a nodes and leafs unique numbers
     points = dict()
     for i, seq in enumerate(seq_list, 0):
@@ -57,15 +59,50 @@ def _draw_tree(tree, canvas):
         point_b = points[node.right.number]
         new_point = _connect_points(point_a, point_b, canvas)
         points[node.number] = new_point
+        canvas.create_oval(new_point.pos_x - 6, new_point.pos_y - 6,
+                           new_point.pos_x + 6, new_point.pos_y + 6,
+                           fill="black")
+        canvas.create_text(new_point.pos_x, new_point.pos_y, text=str(node.bootstrap), fill="#00FFF9")
 
 
-def run_graphics(tree):
+def run_graphics(trees):
+
+    tree_index = 0
+    max_index = len(trees) - 1
 
     def scroll_start(event):
         canvas.scan_mark(event.x, event.y)
 
     def scroll_move(event):
         canvas.scan_dragto(event.x, event.y, gain=1)
+
+    def previous_tree(event):
+        nonlocal canvas
+        nonlocal tree_index
+
+        if tree_index == 0:
+            return
+
+        tree_index -= 1
+        _draw_tree(trees[tree_index][0], canvas)
+        canvas.create_text(750, 550, text=str(tree_index + 1))
+        canvas.create_text(750, 580, text=str(trees[tree_index][1]))
+
+    def next_tree(event):
+        nonlocal canvas
+        nonlocal tree_index
+        nonlocal max_index
+
+        if tree_index == max_index:
+            return
+
+        tree_index += 1
+        _draw_tree(trees[tree_index][0], canvas)
+        if tree_index == max_index:
+            canvas.create_text(750, 550, text="BEST TREE! " + str(tree_index + 1))
+        else:
+            canvas.create_text(750, 550, text=str(tree_index + 1))
+        canvas.create_text(750, 580, text=str(trees[tree_index][1]))
 
     root = Tk()
     root.title("Phylogenetic tree")
@@ -84,7 +121,11 @@ def run_graphics(tree):
 
     canvas.bind("<ButtonPress-1>", scroll_start)
     canvas.bind("<B1-Motion>", scroll_move)
+    root.bind("a", previous_tree)
+    root.bind("d", next_tree)
 
-    _draw_tree(tree, canvas)
+    _draw_tree(trees[tree_index][0], canvas)
+    canvas.create_text(750, 550, text=str(tree_index + 1))
+    canvas.create_text(750, 580, text=str(trees[tree_index][1]))
 
     root.mainloop()

@@ -4,12 +4,15 @@ from parallel import parallel, _match_score, gap_penalty
 from symmetric_matrix import SymmetricMatrix
 
 
-def calculate_similarities(leaves):
+def calculate_similarities(leaves, substitution_matrix):
     matrix = SymmetricMatrix(len(leaves))
     for row in range(len(matrix)):
         for column in range(row + 1):
             if row == column: continue
-            matrix[row, column] = parallel(leaves[row].sequence, leaves[column].sequence)
+
+            # matrix[row, column] = recursive_needleman_wunsch(leaves[row].sequence, leaves[column].sequence,
+            #                                                 0, len(leaves[column].sequence), 0)
+            matrix[row, column] = parallel(leaves[row].sequence, leaves[column].sequence, substitution_matrix)
     return matrix
 
 

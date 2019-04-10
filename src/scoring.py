@@ -67,7 +67,7 @@ def _list_nodes(first_node):
 
 # Since these sequences can get big really quick we'll need to do every step of making and calculating new tree
 # separately allowing memory to clear out strings we don't need
-def score_tree(tree, columns, leaves, index_of_tree):
+def score_tree(tree, columns, leaves, substitution_matrix):
     new_trees = []
     seq_amount = len(columns[0])
     length_of_seq = len(columns)
@@ -90,7 +90,7 @@ def score_tree(tree, columns, leaves, index_of_tree):
         tmp_leaves = []
         for j, leaf in enumerate(leaves):
             tmp_leaves.append(n.TmpLeaf(leaf.name, leaf.year, j, new_sequences[j]))
-        similarity_matrix = p_tree.calculate_similarities(tmp_leaves)
+        similarity_matrix = p_tree.calculate_similarities(tmp_leaves, substitution_matrix)
         boot_tree = p_tree.create_tree(similarity_matrix, leaves)
 
         # Now we can finally count what nodes from our tree are in new tree
@@ -101,13 +101,13 @@ def score_tree(tree, columns, leaves, index_of_tree):
                     node.bootstrap += 1
                     break
 
-    print("TREE WITH BOOTSTRAP: ")
-    print(tree)
+    # print("TREE WITH BOOTSTRAP: ")
+    # print(tree)
 
     # Now after we calculated bootstrap values for all of our nodes, we have to calculate score of a tree
     score = 0
     for node in list_of_nodes:
-        print(node.bootstrap / boot_amount)
+        # print(node.bootstrap / boot_amount)
         score += f(node.bootstrap / boot_amount)
 
     return score
