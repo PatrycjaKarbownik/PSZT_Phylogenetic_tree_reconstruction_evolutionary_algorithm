@@ -101,13 +101,13 @@ def score_tree(tree, columns, leaves, substitution_matrix):
                     node.bootstrap += 1
                     break
 
-    print("TREE WITH BOOTSTRAP: ")
-    print(tree)
+    # print("TREE WITH BOOTSTRAP: ")
+    # print(tree)
 
     # Now after we calculated bootstrap values for all of our nodes, we have to calculate score of a tree
     score = 0
     for node in list_of_nodes:
-        print(node.bootstrap / boot_amount)
+        # print(node.bootstrap / boot_amount)
         score += f(node.bootstrap / boot_amount)
 
     return score

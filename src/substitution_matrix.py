@@ -93,16 +93,16 @@ class SubstitutionMatrix:
     def reached_stop(self):
         return self.sigma < sigma_min
 
-    # chwilowa funkcja do testowania
-    def wypiszWymaluj(self):
-        print("Wypisz wymaluj")
-        print(self.best_bootstrap_value)
-        print(self.best_substitution_matrix)
-        print(self.substitution_matrix)
-        print(self.iter_better_choice)
-
-
-m1 = SubstitutionMatrix()
-m1.wypiszWymaluj()
-m2 = SubstitutionMatrix(True)
-m2.wypiszWymaluj()
+#     # chwilowa funkcja do testowania
+#     def wypiszWymaluj(self):
+#         print("Wypisz wymaluj")
+#         print(self.best_bootstrap_value)
+#         print(self.best_substitution_matrix)
+#         print(self.substitution_matrix)
+#         print(self.iter_better_choice)
+#
+#
+# m1 = SubstitutionMatrix()
+# m1.wypiszWymaluj()
+# m2 = SubstitutionMatrix(True)
+# m2.wypiszWymaluj()
