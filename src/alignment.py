@@ -9,9 +9,6 @@ def calculate_similarities(leaves, substitution_matrix):
     for row in range(len(matrix)):
         for column in range(row + 1):
             if row == column: continue
-
-            # matrix[row, column] = recursive_needleman_wunsch(leaves[row].sequence, leaves[column].sequence,
-            #                                                 0, len(leaves[column].sequence), 0)
             matrix[row, column] = parallel(leaves[row].sequence, leaves[column].sequence, substitution_matrix)
     return matrix
 
@@ -88,15 +85,18 @@ def pairwise_alignment(seq1, seq2):
 
 def multiple_alignment(similarity_matrix, leaves):
     # TODO: FIX IT IMMEDIATELY
+    # finding reference sequence (guide) which will be used to alignments with other sequences
     reference_sequence_index = _reference_sequence_index(similarity_matrix, leaves)
 
-    # pairwise alignment
+    # pairwise alignments
     aligned_sequences = []
     for leaf in leaves:
         aligned_sequences += pairwise_alignment(leaf.sequence, leaves[reference_sequence_index].sequence)
 
     print(aligned_sequences)
 
+    # first step in main part this algorithm - adding first aligned pair to the multiple alignment,
+    # first sequence of this pair will be multiple_guide
     multiple_aligned_sequences = [aligned_sequences[0][0], aligned_sequences[0][1]]
 
     for pair in range(1, len(aligned_sequences)):
@@ -105,25 +105,32 @@ def multiple_alignment(similarity_matrix, leaves):
         else:
             shorter = len(aligned_sequences[pair][0])
 
+        # parallel all of columns in sequences: parallel multiple guide
+        # with local guide (guide each other sequences - first in pair)
         for column in range(shorter):
+            # if only multiple guide has a gap, necessarily is adding a gap in merged sequence
+            # (to ease calculations - add a gap in local guide too
             if multiple_aligned_sequences[0][column] == '-' and aligned_sequences[pair][0][column] != '-':
                 aligned_sequences[pair][1] = aligned_sequences[pair][1][:column] + '-' \
                                              + aligned_sequences[pair][1][column:]
                 aligned_sequences[pair][0] = aligned_sequences[pair][0][:column] + '-' \
                                              + aligned_sequences[pair][0][column:]
-                column -= 1
 
+            # if only local guide has a gap, in each sequences added before has to be added a new gap
             elif aligned_sequences[pair][0][column] == '-' and multiple_aligned_sequences[0][column] != '-':
                 for sequence in range(len(multiple_aligned_sequences)):
                     multiple_aligned_sequences[sequence] = str(multiple_aligned_sequences[sequence][:column]) + '-' \
                                                            + str(multiple_aligned_sequences[sequence][column:])
 
+        # if guides are not the same size:
+        # (local guide is longer than multiple guide), add gaps at the end each sequence merged before
         if len(aligned_sequences[pair][0]) > len(multiple_aligned_sequences[0]):
             temp = len(aligned_sequences[pair][0]) - len(multiple_aligned_sequences[0])
             for sequence in range(len(multiple_aligned_sequences)):
                 for i in range(temp):
                     multiple_aligned_sequences[sequence] += '-'
 
+        # (local guide is shorter than multiple guide), add gaps at the end merged sequence only
         if len(aligned_sequences[pair][0]) < len(multiple_aligned_sequences[0]):
             for i in range(len(multiple_aligned_sequences[0]) - len(aligned_sequences[pair][0])):
                 aligned_sequences[pair][1] += '-'
