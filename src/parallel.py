@@ -1,3 +1,4 @@
+"""Biologic algorithms"""
 import numpy as np
 from substitution_matrix import SubstitutionMatrix
 

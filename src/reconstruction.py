@@ -1,3 +1,4 @@
+"""Main module responsible for connecting every piece of reconstruction"""
 from alignment import calculate_similarities, multiple_alignment
 from nodes import *
 from phylogenetic_tree import *
@@ -16,17 +17,26 @@ manager = mp.Manager()
 trees = manager.list()
 
 
-def EvolutionFunc(tmp_leaves, leaves):
+# This function does the evolution and then saves the best tree to shared list
+def evolution_fun(tmp_leaves, leaves):
     sub_matrix = SubstitutionMatrix(True)
     best_tree = None
     global trees
 
     while not sub_matrix.reached_stop():
+        # First we generate our new substitution matrix
         sub_matrix.change_substitution_matrix()
+
+        # We need now to calculate similiarities in order to generate new tree
         similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
         node = create_tree(similarity_matrix, leaves)
+
+        # Now we're scoring out tree
         columns = scoring.make_columns(tmp_leaves)
         score = scoring.score_tree(node, columns, leaves, sub_matrix)
+
+        # At last we save our best tree. has_better_bootstrap_value automatically changes sub_matrix
+        # to it's previous state if it detects that it had worse score than previous one
         if sub_matrix.has_better_bootstrap_value(score):
             best_tree = (node, score)
 
@@ -49,15 +59,25 @@ def load():
 
 
 load()
+
+# Our sequences will often have different sizes and we have to align them, which we're doing below
+sub_matrix = SubstitutionMatrix()
+similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
+temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
+for i in range(len(temp_seq)):
+    tmp_leaves[i].sequence = temp_seq[i]
+
 for i, leaf in enumerate(tmp_leaves):
     leaves.append(Leaf(leaf.name, leaf.year, i))
     print(leaf)
 
 proc_num = int(input("Number of processes: "))
 
+# Since we want our results to be as closely to maximum as possible, we can run our algorithm parallel with
+# Randomly generated data
 processes = []
 for i in range(proc_num):
-    new_proc = mp.Process(target=EvolutionFunc, args=(tmp_leaves, leaves, ))
+    new_proc = mp.Process(target=evolution_fun, args=(tmp_leaves, leaves,))
     new_proc.start()
     processes.append(new_proc)
 

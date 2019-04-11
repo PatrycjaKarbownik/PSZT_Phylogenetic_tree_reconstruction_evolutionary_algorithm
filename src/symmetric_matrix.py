@@ -4,7 +4,7 @@ import sys
 
 
 class SymmetricMatrix:
-    # TODO: swap columns and rows indexes
+
     def __init__(self, size):
         if size <= 0:
             raise ValueError("Size of matrix is expected to be integer greater than 0")
@@ -38,15 +38,16 @@ class SymmetricMatrix:
         maximum = -sys.maxsize
         column_max = row_max = 0
         for row in range(self._size):
-            if not availability[row]: continue
+            if not availability[row]:
+                continue
             for column in range(row + 1, self._size):
-                if not availability[column]: continue
+                if not availability[column]:
+                    continue
                 value = self._matrix[self._get_index((column, row))]
                 if maximum < value:
                     maximum = value
                     column_max = column
                     row_max = row
-        # TODO: change order of returned variables if you changed indexes earlier
         return column_max, row_max
 
     def __str__(self):

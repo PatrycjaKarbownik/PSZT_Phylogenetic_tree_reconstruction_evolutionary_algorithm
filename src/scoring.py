@@ -1,3 +1,7 @@
+"""Functions used for scoring trees. It bootstraps sequences used to create tree by given amount (100 for example),
+and then generates same given amount of trees and checks for any similarities between them. More similar nodes -
+more reliable node is."""
+
 import random
 import nodes as n
 import numpy as np

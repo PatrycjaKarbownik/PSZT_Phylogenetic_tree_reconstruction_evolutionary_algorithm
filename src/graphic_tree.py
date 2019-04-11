@@ -1,4 +1,4 @@
-"""Simple interface for watching created trees. It is not my proudest piece of code, but it works."""
+"""Simple interface for watching created trees. Definitely not best piece of code but it works."""
 
 from tkinter import *
 from nodes import *

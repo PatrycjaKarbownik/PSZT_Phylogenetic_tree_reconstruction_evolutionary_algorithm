@@ -1,3 +1,4 @@
+"""Functions for creating trees."""
 from nodes import Node
 import numpy as np
 from symmetric_matrix import *
@@ -39,8 +40,7 @@ def _connect_nodes(availability, nodes, first_node, second_node):
 
 
 def _correct_matrix(similarity_matrix, availability, first_node, second_node):
-    # TODO: correct_matrix
-    # temporary it will be average of values from nodes:
+    # Simplified version of correction - it will calculate average of values from nodes:
     for i in range(len(similarity_matrix)):
         if availability[i] and not (i == first_node or i == second_node):
             similarity_matrix[first_node, i] = (similarity_matrix[first_node, i] + similarity_matrix[second_node, i])/2

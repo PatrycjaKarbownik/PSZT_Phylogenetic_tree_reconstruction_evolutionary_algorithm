@@ -1,3 +1,5 @@
+"""Module with functions allowing to align our sequences. It is needed since our bootstraping methods require
+data of same size, which we can achieve by aligning data."""
 import numpy as np
 
 from parallel import parallel, _match_score, gap_penalty
@@ -84,16 +86,14 @@ def pairwise_alignment(seq1, seq2):
 
 
 def multiple_alignment(similarity_matrix, leaves):
-    # TODO: FIX IT IMMEDIATELY
+
     # finding reference sequence (guide) which will be used to alignments with other sequences
     reference_sequence_index = _reference_sequence_index(similarity_matrix, leaves)
 
     # pairwise alignments
     aligned_sequences = []
     for leaf in leaves:
-        aligned_sequences += pairwise_alignment(leaf.sequence, leaves[reference_sequence_index].sequence)
-
-    print(aligned_sequences)
+        aligned_sequences.append(pairwise_alignment(leaves[reference_sequence_index].sequence, leaf.sequence))
 
     # first step in main part this algorithm - adding first aligned pair to the multiple alignment,
     # first sequence of this pair will be multiple_guide
@@ -136,7 +136,7 @@ def multiple_alignment(similarity_matrix, leaves):
                 aligned_sequences[pair][1] += '-'
         multiple_aligned_sequences.append(aligned_sequences[pair][1])
 
-    print(multiple_aligned_sequences)
+    return multiple_aligned_sequences
 
 
 if __name__ == "__main__":
@@ -147,4 +147,3 @@ if __name__ == "__main__":
     seq4 = "ACGGATCGTATC"
 
     print(pairwise_alignment(seq3, seq4))
-    #print(multiple_alignment(similarity_matrix, leaves))
