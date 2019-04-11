@@ -65,7 +65,7 @@ def evolution_fun(tmp_leaves, leaves):
 def load():
     n = 0
 #    with open("../data/old_sequences.txt", "r") as file:
-    with open("../data/test01.txt", "r") as file:
+    with open("../data/test02.txt", "r") as file:
         for i, line in enumerate(file):
             n += 1
             if n % 2 == 1:
