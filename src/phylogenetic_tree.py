@@ -6,6 +6,10 @@ from parallel import *
 
 
 def create_tree(similarity_matrix, leaves):
+
+    # We need now to calculate similiarities in order to generate new tree
+    #similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
+
     nodes = leaves.copy()
     length_of_nodes = len(nodes)
     availability = np.full(length_of_nodes, True)  # creating list of boolean to read if a node can be choose to connect with other

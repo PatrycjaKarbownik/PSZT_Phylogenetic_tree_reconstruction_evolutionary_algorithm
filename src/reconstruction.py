@@ -19,11 +19,29 @@ trees = manager.list()
 
 # This function does the evolution and then saves the best tree to shared list
 def evolution_fun(tmp_leaves, leaves):
+    started_tmp_leaves = tmp_leaves
     sub_matrix = SubstitutionMatrix(True)
     best_tree = None
     global trees
 
     while not sub_matrix.reached_stop():
+        # conteners have to be have started value
+        leaves = []
+        tmp_leaves = []
+        for started_leaf in started_tmp_leaves:
+            tmp_leaves.append( \
+                TmpLeaf(started_leaf.name, started_leaf.year, started_leaf.number, started_leaf.sequence))
+
+        similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
+        temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
+        print(len(temp_seq))
+        print(len(tmp_leaves))
+        for i in range(len(temp_seq)):
+            tmp_leaves[i].sequence = temp_seq[i]
+
+        for i, leaf in enumerate(tmp_leaves):
+            leaves.append(Leaf(leaf.name, leaf.year, i))
+
         # First we generate our new substitution matrix
         sub_matrix.change_substitution_matrix()
 
@@ -45,7 +63,7 @@ def evolution_fun(tmp_leaves, leaves):
 
 def load():
     n = 0
-    with open("../data/sequences.txt", "r") as file:
+    with open("../data/old_sequences.txt", "r") as file:
         for i, line in enumerate(file):
             n += 1
             if n % 2 == 1:
@@ -61,15 +79,17 @@ def load():
 load()
 
 # Our sequences will often have different sizes and we have to align them, which we're doing below
-sub_matrix = SubstitutionMatrix()
-similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
-temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
-for i in range(len(temp_seq)):
-    tmp_leaves[i].sequence = temp_seq[i]
 
-for i, leaf in enumerate(tmp_leaves):
-    leaves.append(Leaf(leaf.name, leaf.year, i))
-    print(leaf)
+# sub_matrix = SubstitutionMatrix()
+# similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
+# temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
+# print(len(temp_seq))
+# print(len(tmp_leaves))
+# for i in range(len(temp_seq)):
+#     tmp_leaves[i].sequence = temp_seq[i]
+
+# for i, leaf in enumerate(tmp_leaves):
+#     leaves.append(Leaf(leaf.name, leaf.year, i))
 
 proc_num = int(input("Number of processes: "))
 

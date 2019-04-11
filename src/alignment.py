@@ -2,6 +2,7 @@
 data of same size, which we can achieve by aligning data."""
 import numpy as np
 
+from nodes import Leaf, TmpLeaf
 from parallel import parallel, _match_score, gap_penalty
 from symmetric_matrix import SymmetricMatrix
 
@@ -30,7 +31,7 @@ def _reference_sequence_index(similarity_matrix, leaves):
 
 
 # Needleman-Wunsch algorithm with n x m score matrix
-def _simple_needleman_wunsch_score(seq1, seq2):
+def _simple_needleman_wunsch_score(seq1, seq2, similarity_matrix):
     length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
     result = np.empty([length_of_seq1 + 1, length_of_seq2 + 1], int)  # prepare matrix for scoring the alignment
 
@@ -45,14 +46,14 @@ def _simple_needleman_wunsch_score(seq1, seq2):
         for i in range(1, length_of_seq1 + 1):
             gap1 = result[i][j-1] + gap_penalty
             gap2 = result[i-1][j] + gap_penalty
-            align = result[i-1][j-1] + _match_score(seq1[i-1], seq2[j-1])
+            align = result[i-1][j-1] + _match_score(seq1[i-1], seq2[j-1], similarity_matrix)
             result[i][j] = max(gap1, gap2, align)
 
     return result
 
 
 # return from bottom right cell to the top left to produce aligned sequences
-def _get_aligned_sequences(score, seq1, seq2):
+def _get_aligned_sequences(score, seq1, seq2, similarity_matrix):
     length_of_seq1, length_of_seq2 = len(seq1), len(seq2)
     j = length_of_seq2
     i = length_of_seq1
@@ -60,7 +61,7 @@ def _get_aligned_sequences(score, seq1, seq2):
     seq2_aligned = ''
     while i > 0 or j > 0:
         # check if algorithm goes from up, aside or from diagonal
-        if score[i][j] == score[i - 1][j - 1] + _match_score(seq1[i - 1], seq2[j - 1]):
+        if score[i][j] == score[i - 1][j - 1] + _match_score(seq1[i - 1], seq2[j - 1], similarity_matrix):
             seq1_aligned += seq1[i - 1]
             seq2_aligned += seq2[j - 1]
             i -= 1
@@ -80,9 +81,9 @@ def _get_aligned_sequences(score, seq1, seq2):
     return [seq1_aligned, seq2_aligned]
 
 
-def pairwise_alignment(seq1, seq2):
-    score = _simple_needleman_wunsch_score(seq1, seq2)
-    return _get_aligned_sequences(score, seq1, seq2)
+def pairwise_alignment(seq1, seq2, similarity_matrix):
+    score = _simple_needleman_wunsch_score(seq1, seq2, similarity_matrix)
+    return _get_aligned_sequences(score, seq1, seq2, similarity_matrix)
 
 
 def multiple_alignment(similarity_matrix, leaves):
@@ -93,11 +94,12 @@ def multiple_alignment(similarity_matrix, leaves):
     # pairwise alignments
     aligned_sequences = []
     for leaf in leaves:
-        aligned_sequences.append(pairwise_alignment(leaves[reference_sequence_index].sequence, leaf.sequence))
+        aligned_sequences.append(pairwise_alignment(leaves[reference_sequence_index].sequence,
+                                                    leaf.sequence, similarity_matrix))
 
     # first step in main part this algorithm - adding first aligned pair to the multiple alignment,
     # first sequence of this pair will be multiple_guide
-    multiple_aligned_sequences = [aligned_sequences[0][0], aligned_sequences[0][1]]
+    multiple_aligned_sequences = [aligned_sequences[0][1]]
 
     for pair in range(1, len(aligned_sequences)):
         if len(aligned_sequences[pair][0]) > len(multiple_aligned_sequences[0]):
@@ -146,4 +148,16 @@ if __name__ == "__main__":
     seq3 = "ACTGGTCAT"
     seq4 = "ACGGATCGTATC"
 
-    print(pairwise_alignment(seq3, seq4))
+    similiarity_matrix = SymmetricMatrix(5)
+    similiarity_matrix.set_from_list([10,
+                                      -1, 7,
+                                      -3, -5, 9,
+                                      -4, -3, 0, 8,
+                                      -5, -5, -5, -5, 2])
+    temp_leaves = []
+    for i, seq in enumerate(sequences1):
+        temp_leaves.append(TmpLeaf(seq, "2000", i, seq))
+
+    print(pairwise_alignment(seq3, seq4, similiarity_matrix))
+
+    print(multiple_alignment(similiarity_matrix, temp_leaves))
