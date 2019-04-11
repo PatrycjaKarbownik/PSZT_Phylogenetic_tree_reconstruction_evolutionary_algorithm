@@ -22,7 +22,7 @@ def EvolutionFunc(tmp_leaves, leaves):
     global trees
 
     while not sub_matrix.reached_stop():
-        sub_matrix.changeSubstitutionMatrix()
+        sub_matrix.change_substitution_matrix()
         similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
         node = create_tree(similarity_matrix, leaves)
         columns = scoring.make_columns(tmp_leaves)

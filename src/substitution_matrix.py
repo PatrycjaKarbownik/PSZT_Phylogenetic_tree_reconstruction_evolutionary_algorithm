@@ -1,3 +1,7 @@
+"""Module containing substitution matrix BUT! it has also implemented mechanism for 1 + 1 evolution.
+Evolutionary algorithm simply generates parameters from normal distribution and then add this parameters
+multiplied by sigma to substitution matrix."""
+
 import numpy as np
 from symmetric_matrix import SymmetricMatrix
 
@@ -14,7 +18,7 @@ T = 3
 
 class SubstitutionMatrix:
 
-    # initial_change = True wtedy gdy chcemy by poczatkowa macierz substytucji byla inna
+    # Initial change should be true if we want our initial matrix to be different
     def __init__(self, initial_change=False):
         self.best_substitution_matrix = SymmetricMatrix(5)
         self.best_substitution_matrix.set_from_list([10,
@@ -29,33 +33,39 @@ class SubstitutionMatrix:
         self.gap_penalty = -5
         self.best_gap_penalty = -5
         if initial_change:
-            self.changeSubstitutionMatrix(True)
+            self.change_substitution_matrix(True)
         self.best_bootstrap_value = 0
 
     def __getitem__(self, key):
         return self.substitution_matrix[key]
 
-    # funkcja zmienia parametry macierzy substytucji dla aktualnej iteracji oraz pilnuje m_counter
-    # initial_change = True dla Zwielokrotnionego 1+1 by startowac z roznych punktow
-    def changeSubstitutionMatrix(self, initial_change=False):
+    # Function changes parameters of matrix and checks m_counter
+    # Initial change should be True for parallel 1+1 algorithm so it'll start from different matrices
+    def change_substitution_matrix(self, initial_change=False):
         if not initial_change:
+            # We're here generating numbers from normal distribution to use it for mutation
             s = np.random.normal(0, 1, 15)
         else:
             s = np.random.random_sample(15)
             s *= 4
 
-        s += self.sigma
+        s_sigma = np.random.normal(0, 1)
+
+        self.gap_penalty += self.sigma * s_sigma
+        # add_from_list simply takes whole list and adds first element of list to first element of matrix
+        # This method is optimized for symmetric matrix
         self.substitution_matrix.add_from_list(s)
 
+        # Checks whether we should update our sigma
         if not initial_change:
             self.m_counter += 1
             if self.m_counter >= m:
-                self.changeSigma()
+                self.change_sigma()
         else:
-            self.equalSubstitutionMatricies(True)
+            self.equal_substitution_matrices(True)
 
-    # aktualizuje sigme jesli na to czas - wywolana w changeSubstitutionMatrix()
-    def changeSigma(self):
+    # Updating sigma when m_counter reached certain value
+    def change_sigma(self):
         phi = self.iter_better_choice / m
         if phi > 0.2:
             # Increasing the search radius
@@ -76,15 +86,15 @@ class SubstitutionMatrix:
             # Result hasn't declined, we're setting new best matrix
             self.best_bootstrap_value = new_Value
             self.iter_better_choice += 1
-            self.equalSubstitutionMatricies(True)
+            self.equal_substitution_matrices(True)
             return True
         else:
             # Result is worse, we're keeping old matrix
-            self.equalSubstitutionMatricies(False)
+            self.equal_substitution_matrices(False)
             return False
 
-    # wyrownuje macierze substytucji (zwykla i best) wedlug decyzji: False - 'cofamy krok'; True - 'stawiamy krok'
-    def equalSubstitutionMatricies(self, new_best=False):
+    # Method changes best substitution matrix if old one wasn't better
+    def equal_substitution_matrices(self, new_best=False):
         if new_best:
             self.best_substitution_matrix = self.substitution_matrix.copy()
         else:
@@ -92,17 +102,3 @@ class SubstitutionMatrix:
 
     def reached_stop(self):
         return self.sigma < sigma_min
-
-#     # chwilowa funkcja do testowania
-#     def wypiszWymaluj(self):
-#         print("Wypisz wymaluj")
-#         print(self.best_bootstrap_value)
-#         print(self.best_substitution_matrix)
-#         print(self.substitution_matrix)
-#         print(self.iter_better_choice)
-#
-#
-# m1 = SubstitutionMatrix()
-# m1.wypiszWymaluj()
-# m2 = SubstitutionMatrix(True)
-# m2.wypiszWymaluj()
