@@ -29,9 +29,10 @@ def evolution_fun(tmp_leaves, leaves):
         leaves = []
         tmp_leaves = []
         for started_leaf in started_tmp_leaves:
-            tmp_leaves.append( \
+            tmp_leaves.append(
                 TmpLeaf(started_leaf.name, started_leaf.year, started_leaf.number, started_leaf.sequence))
 
+        # Multiple alignment
         similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
         temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
         print(len(temp_seq))
@@ -63,7 +64,8 @@ def evolution_fun(tmp_leaves, leaves):
 
 def load():
     n = 0
-    with open("../data/old_sequences.txt", "r") as file:
+#    with open("../data/old_sequences.txt", "r") as file:
+    with open("../data/test01.txt", "r") as file:
         for i, line in enumerate(file):
             n += 1
             if n % 2 == 1:
@@ -77,19 +79,6 @@ def load():
 
 
 load()
-
-# Our sequences will often have different sizes and we have to align them, which we're doing below
-
-# sub_matrix = SubstitutionMatrix()
-# similarity_matrix = calculate_similarities(tmp_leaves, sub_matrix)
-# temp_seq = multiple_alignment(similarity_matrix, tmp_leaves)
-# print(len(temp_seq))
-# print(len(tmp_leaves))
-# for i in range(len(temp_seq)):
-#     tmp_leaves[i].sequence = temp_seq[i]
-
-# for i, leaf in enumerate(tmp_leaves):
-#     leaves.append(Leaf(leaf.name, leaf.year, i))
 
 proc_num = int(input("Number of processes: "))
 
