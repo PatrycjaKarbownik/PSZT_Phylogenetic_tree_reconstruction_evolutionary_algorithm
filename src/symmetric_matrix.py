@@ -79,6 +79,12 @@ class SymmetricMatrix:
         for pos, value in enumerate(given_list, 0):
             self._matrix[pos] += value
 
+    # Same as add_from_list, but instead add value you multiply every position in matrix
+    def multiply_from_list(self, given_list):
+        if len(given_list) != len(self._matrix):
+            return
+        for pos, value in enumerate(given_list, 0):
+            self._matrix[pos] *= value
 
 if __name__ == "__main__":
     matrix = SymmetricMatrix(4)

@@ -43,25 +43,25 @@ class SubstitutionMatrix:
     # Initial change should be True for parallel 1+1 algorithm so it'll start from different matrices
     def change_substitution_matrix(self, initial_change=False):
         if not initial_change:
+            s_sigma = np.random.normal(0, 1)
+            self.gap_penalty += self.sigma * s_sigma
             # We're here generating numbers from normal distribution to use it for mutation
             s = np.random.normal(0, 1, 15)
-        else:
-            s = np.random.random_sample(15)
-            s *= 4
-
-        s_sigma = np.random.normal(0, 1)
-
-        self.gap_penalty += self.sigma * s_sigma
-        # add_from_list simply takes whole list and adds first element of list to first element of matrix
-        # This method is optimized for symmetric matrix
-        self.substitution_matrix.add_from_list(s)
-
-        # Checks whether we should update our sigma
-        if not initial_change:
+            s *= self.sigma
+            # add_from_list simply takes whole list and adds first element of list to first element of matrix
+            # This method is optimized for symmetric matrix
+            self.substitution_matrix.add_from_list(s)
             self.m_counter += 1
+            # Checks whether we should update our sigma
             if self.m_counter >= m:
                 self.change_sigma()
         else:
+            s = np.random.random_sample(15)
+            multiply_value = 4
+            s *= multiply_value
+            s_sigma = np.random.random_sample(1) * multiply_value
+            self.gap_penalty *= s_sigma
+            self.substitution_matrix.multiply_from_list(s)
             self.equal_substitution_matrices(True)
 
     # Updating sigma when m_counter reached certain value
