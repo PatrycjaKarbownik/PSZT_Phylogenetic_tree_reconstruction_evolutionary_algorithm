@@ -7,14 +7,7 @@ import graphic_tree
 import time
 import multiprocessing as mp
 from substitution_matrix import SubstitutionMatrix
-
-tmp_leaves = []
-leaves = []
-start_time = time.clock()
-
-# We're using manager which will provide a shared list between processes
-manager = mp.Manager()
-trees = manager.list()
+import parallel
 
 
 # This function does the evolution and then saves the best tree to shared list
@@ -64,7 +57,7 @@ def evolution_fun(tmp_leaves, leaves):
 
 def load():
     n = 0
-#    with open("../data/old_sequences.txt", "r") as file:
+    #    with open("../data/old_sequences.txt", "r") as file:
     with open("../data/test02.txt", "r") as file:
         for i, line in enumerate(file):
             n += 1
@@ -78,23 +71,35 @@ def load():
     file.close()
 
 
-load()
+if __name__ == "__main__":
+    mp.freeze_support()
 
-proc_num = int(input("Number of processes: "))
+    tmp_leaves = []
+    leaves = []
+    start_time = time.clock()
 
-# Since we want our results to be as closely to maximum as possible, we can run our algorithm parallel with
-# Randomly generated data
-processes = []
-for i in range(proc_num):
-    new_proc = mp.Process(target=evolution_fun, args=(tmp_leaves, leaves,))
-    new_proc.start()
-    processes.append(new_proc)
+    # We're using manager which will provide a shared list between processes
+    manager = mp.Manager()
+    trees = manager.list()
 
-while not all(not process.is_alive() for process in processes):
-    pass
+    load()
 
-print("Time of everything: " + str(time.clock() - start_time))
+    proc_num = int(input("Number of processes: "))
 
-trees = sorted(trees, key=lambda tree: tree[1])
+    # Since we want our results to be as closely to maximum as possible, we can run our algorithm parallel with
+    # Randomly generated data
+    processes = []
+    for i in range(proc_num):
+        new_proc = mp.Process(target=evolution_fun, args=(tmp_leaves, leaves,))
+        new_proc.start()
+        processes.append(new_proc)
 
-graphic_tree.run_graphics(trees)
+    while not all(not process.is_alive() for process in processes):
+        pass
+
+    print("Time of everything: " + str(time.clock() - start_time))
+
+    trees = sorted(trees, key=lambda tree: tree[1])
+
+    graphic_tree.run_graphics(trees)
+
